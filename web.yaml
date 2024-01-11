@@ -27,6 +27,7 @@
     ansible.builtin.unarchive:
       src: /tmp/web.zip
       dest: /usr/share/nginx/html
+      remote_src: yes
 
   - name: Start service mongodb, if not started
     ansible.builtin.service:
