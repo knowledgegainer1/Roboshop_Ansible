@@ -2,71 +2,71 @@
   hosts: catalouge
   become: yes
   tasks:
-  - name: catalouge removing old version 
-    ansible.builtin.shell: dnf module disable nodejs -y;dnf module enable nodejs:18 -y
-  - name: installing new package
-    ansible.builtin.package:
-     name: nodejs
-     state: present
-  - name: Add the user 'roboshop' with a specific uid and a primary group of 'admin'
-    ansible.builtin.user:
-     name: roboshop
-  
-  - name: Create a directory if it does not exist
-    ansible.builtin.file:
-    path: /app
-    state: directory   # here state ,directory needs to be mentioned other wiese it will take as file
-    mode: '0777'
+    - name: catalouge removing old version
+      ansible.builtin.shell: dnf module disable nodejs -y;dnf module enable nodejs:18 -y
+    - name: installing new package
+      ansible.builtin.package:
+        name: nodejs
+        state: present
+    - name: Add the user 'roboshop' with a specific uid and a primary group of 'admin'
+      ansible.builtin.user:
+        name: roboshop
 
-  - name: Download the application code to created app directory.
-    ansible.builtin.get_url:
-    url: https://roboshop-builds.s3.amazonaws.com/catalogue.zip
-    dest: /tmp/catalogue.zip
+    - name: Create a directory if it does not exist
+      ansible.builtin.file:
+        path: /app
+        state: directory # here state ,directory needs to be mentioned other wiese it will take as file
+        mode: "0777"
 
-  - name: Unarchive a file that is already on the remote machine
-    ansible.builtin.unarchive:
-    src: /tmp/catalogue.zip
-    dest: /app
-    remote_src: yes
-  
-  - name: installing npm 
-    ansible.builtin.shell: npm install
-    args: 
-      chdir: /app
-  
-  - name:  copy
-    ansible.builtin.copy:
-     src: catalogue.service
-     dest: /etc/systemd/system/catalogue.service
+    - name: Download the application code to created app directory.
+      ansible.builtin.get_url:
+        url: https://roboshop-builds.s3.amazonaws.com/catalogue.zip
+        dest: /tmp/catalogue.zip
 
-  - name: Restart service cron on centos, in all cases, also issue daemon-reload to pick up config changes
-    ansible.builtin.systemd_service:
-      daemon_reload: true
+    - name: Unarchive a file that is already on the remote machine
+      ansible.builtin.unarchive:
+      src: /tmp/catalogue.zip
+      dest: /app
+      remote_src: yes
 
-  - name:  copy
-    ansible.builtin.copy:
-     src: mongo.repo
-     dest: /etc/yum.repos.d/mongo.repo
-  
-  - name: installing pks
-    ansible.builtin.package:
-     name: mongodb-org-shell
-     state: present
+    - name: installing npm
+      ansible.builtin.shell: npm install
+      args:
+        chdir: /app
 
-  - name: get the categories count
-    ansible.builtin.command:  mongo --host mongodb.daws76s.online --quiet --eval 'db = db.getSiblingDB("catalogue"); db.products.count()'
-    register: product_count
+    - name: copy
+      ansible.builtin.copy:
+        src: catalogue.service
+        dest: /etc/systemd/system/catalogue.service
 
-  # - name: print the count
-  #   ansible.builtin.debug:
-  #     msg: "product count: {{product_count}}"
+    - name: Restart service cron on centos, in all cases, also issue daemon-reload to pick up config changes
+      ansible.builtin.systemd_service:
+        daemon_reload: true
 
-  - name: load catalogue data
-    ansible.builtin.command: mongo --host mongodb.daws76s.online < /app/schema/catalogue.js
-    when: product_count.stdout == "0" # keep double quotes
+    - name: copy
+      ansible.builtin.copy:
+        src: mongo.repo
+        dest: /etc/yum.repos.d/mongo.repo
 
-  - name: Start service mongodb, if not started
-    ansible.builtin.service:
-      name: catalogue
-      state: restarted
-      enabled: yes
+    - name: installing pks
+      ansible.builtin.package:
+        name: mongodb-org-shell
+        state: present
+
+    - name: get the categories count
+      ansible.builtin.command: mongo --host mongodb.daws76s.online --quiet --eval 'db = db.getSiblingDB("catalogue"); db.products.count()'
+      register: product_count
+
+    # - name: print the count
+    #   ansible.builtin.debug:
+    #     msg: "product count: {{product_count}}"
+
+    - name: load catalogue data
+      ansible.builtin.command: mongo --host mongodb.daws76s.online < /app/schema/catalogue.js
+      when: product_count.stdout == "0" # keep double quotes
+
+    - name: Start service mongodb, if not started
+      ansible.builtin.service:
+        name: catalogue
+        state: restarted
+        enabled: yes
