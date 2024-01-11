@@ -9,7 +9,12 @@
       ansible.builtin.package:
         name: nodejs
         state: present
-
+    - name: Remove the user 'johnd'
+      ansible.builtin.user:
+        name: johnd
+        state: absent
+        remove: yes
+        
     - name: Add the user 'roboshop' with a specific uid and a primary group of 'admin'
       ansible.builtin.user:
         name: roboshop
