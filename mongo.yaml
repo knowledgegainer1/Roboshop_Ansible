@@ -1,5 +1,5 @@
 - name: mongoDb installing
-  hosts: 172.31.45.26 #which server/host we r confg it that ip we should give here we r giving mongo private ip so that ansible can create all this things there without opeinng
+  hosts: mongodb #which server/host we r confg it that ip we should give here we r giving mongo private ip so that ansible can create all this things there without opeinng
   become: yes
   tasks:
     - name: copy repo from our repo to server confg
