@@ -25,9 +25,9 @@
 
     - name: Unarchive a file that is already on the remote machine
       ansible.builtin.unarchive:
-      src: /tmp/catalogue.zip
-      dest: /app
-      remote_src: yes
+        src: /tmp/catalogue.zip
+        dest: /app
+        remote_src: yes
 
     - name: installing npm
       ansible.builtin.shell: npm install
