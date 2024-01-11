@@ -4,13 +4,20 @@
   tasks:
     - name: catalouge removing old version
       ansible.builtin.shell: dnf module disable nodejs -y;dnf module enable nodejs:18 -y
+
     - name: installing new package
       ansible.builtin.package:
         name: nodejs
         state: present
+
     - name: Add the user 'roboshop' with a specific uid and a primary group of 'admin'
       ansible.builtin.user:
         name: roboshop
+
+    - name: Recursively remove directory
+      ansible.builtin.file:
+      path: /app
+      state: absent
 
     - name: Create a directory if it does not exist
       ansible.builtin.file:
@@ -54,7 +61,7 @@
         state: present
 
     - name: get the categories count
-      ansible.builtin.command: mongo --host mongodb.daws76s.online --quiet --eval 'db = db.getSiblingDB("catalogue"); db.products.count()'
+      ansible.builtin.command: mongo --host 172.31.43.18 --quiet --eval 'db = db.getSiblingDB("catalogue"); db.products.count()'
       register: product_count
 
     # - name: print the count
@@ -62,7 +69,7 @@
     #     msg: "product count: {{product_count}}"
 
     - name: load catalogue data
-      ansible.builtin.command: mongo --host mongodb.daws76s.online < /app/schema/catalogue.js
+      ansible.builtin.command: mongo --host 172.31.43.18 < /app/schema/catalogue.js
       when: product_count.stdout == "0" # keep double quotes
 
     - name: Start service mongodb, if not started
