@@ -1,0 +1,12 @@
+- name: catalouge
+  hosts:
+  become: yes
+  tasks:
+  - name: catalouge removing old version 
+    ansible.builtin.command: dnf module disable nodejs -y
+
+  - name: enabling latest opeinng
+    ansible.builtin.command: dnf module enable nodejs:18 -y
+
+  - name: installing new server
+    ansible.builtin.command: dnf install nodejs -y
