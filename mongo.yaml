@@ -1,30 +1,30 @@
-- name: mongoDb installing
-  hosts: mongodb #which server/host we r confg it that ip we should give here we r giving mongo private ip so that ansible can create all this things there without opeinng
+- name: mongodb
+  hosts: mongodb
   become: yes
   tasks:
-    - name: copy repo from our repo to server confg
-      ansible.builtin.copy:
-        src: mongo.repo
-        dest: /etc/yum.repos.d/mongo.repo
+  - name: Copy mongodb repo
+    ansible.builtin.copy:
+      src: mongodb.repo
+      dest: /etc/yum.repos.d/mongodb.repo
+  
+  - name: Install mongodb
+    ansible.builtin.package:
+      name: mongodb-org
+      state: present
 
-    - name: installing mongoDb
-      ansible.builtin.package:
-        name: mongodb-org
-        state: present
+  - name: start and enable mongodb
+    ansible.builtin.service:
+      name: mongod
+      state: started
+      enabled: yes
 
-    - name: Start service mongodb, if not started
-      ansible.builtin.service:
-        name: mongod
-        state: started
-        enabled: yes
+  - name: allow remote conncections
+    ansible.builtin.replace:
+      path: /etc/mongod.conf
+      regexp: '127.0.0.1'
+      replace: '0.0.0.0'
 
-    - name: Replace old hostname with new hostname 
-      ansible.builtin.replace:
-        path: /etc/mongod.conf
-        regexp: "127.0.0.1"
-        replace: "0.0.0.0"
-
-    - name: Start service mongodb, if not started
-      ansible.builtin.service:
-        name: mongod
-        state: restarted
+  - name: start and enable mongodb
+    ansible.builtin.service:
+      name: mongod
+      state: restarted
