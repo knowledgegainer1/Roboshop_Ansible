@@ -3,10 +3,10 @@
   become: yes
   tasks:
   - name: catalouge removing old version 
-    ansible.builtin.command: dnf module disable nodejs -y
+    ansible.builtin.shell: dnf module disable nodejs -y;dnf module enable nodejs:18 -y
+  - name: installing new package
+    ansible.builtin.package:
+     name: dnf install nodejs -y
+  
 
-  - name: enabling latest opeinng
-    ansible.builtin.command: dnf module enable nodejs:18 -y
-
-  - name: installing new server
-    ansible.builtin.command: dnf install nodejs -y
+  
