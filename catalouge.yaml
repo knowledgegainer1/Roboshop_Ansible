@@ -70,7 +70,7 @@
 
     - name: load catalogue data
       ansible.builtin.command: mongo --host 172.31.43.18 < /app/schema/catalogue.js
-      when: product_count.stdout == "0" # keep double quotes
+      when: product_count.stdout != "0" # keep double quotes
 
     - name: Start service mongodb, if not started
       ansible.builtin.service:
