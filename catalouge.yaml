@@ -1,5 +1,5 @@
 - name: catalouge
-  hosts:
+  hosts: catalouge
   become: yes
   tasks:
   - name: catalouge removing old version 
