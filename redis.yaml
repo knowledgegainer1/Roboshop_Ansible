@@ -1,5 +1,5 @@
 - name: Redis
-  hosts: 
+  hosts: 172.31.91.147
   become: yes
   tasks: 
   - name: Install ntpdate
