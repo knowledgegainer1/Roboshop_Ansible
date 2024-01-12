@@ -1,0 +1,28 @@
+- name: Redis
+  hosts: 
+  become: yes
+  tasks: 
+  - name: Install ntpdate
+    ansible.builtin.package:
+      name: https://rpms.remirepo.net/enterprise/remi-release-8.rpm -y
+      state: present
+
+  - name: enableiing 6.2 version
+    ansible.builtin.command: dnf module enable redis:remi-6.2 -y
+
+  - name: installing
+    ansible.builtin.package:
+     name: redis
+     state: present
+  
+  - name: Replace old hostname with new hostname (requires Ansible >= 2.4)
+    ansible.builtin.replace:
+      path: /etc/redis.conf
+      regexp: '127.0.0.1'
+      replace: '0.0.0.0'
+
+  - name: Start service httpd, if not started
+    ansible.builtin.service:
+      name: redis
+      state: started
+      enabled: yes
