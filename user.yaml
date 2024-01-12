@@ -70,7 +70,7 @@
 
     - name: load user data
       ansible.builtin.command: mongo --host 172.31.82.179 < /app/schema/user.js
-      when: product_count.stdout == "0" # keep double quotes
+      when: user_count.stdout == "0" # keep double quotes
 
     - name: Start service mongodb, if not started
       ansible.builtin.service:
